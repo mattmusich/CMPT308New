@@ -147,8 +147,117 @@ c.city IN
 	COUNT(p.city) DESC
 	LIMIT 1);
 
+--11
+SELECT
+c.name,
+c.city
+FROM
+customers c
+WHERE 
+c.city IN
+	(SELECT 
+	p.city
+	FROM 
+	products p
+	GROUP BY 
+	p.city
+	HAVING COUNT(p.city) IN
+		(SELECT
+		COUNT(p.city)
+		FROM 
+		products p
+		GROUP BY 
+		p.city
+		ORDER BY 
+		COUNT(p.city) DESC
+		LIMIT 1)
+		);
+		
+--12
+SELECT
+p.name
+FROM
+products p
+GROUP BY 
+p.name
+HAVING 
+AVG(priceUSD) > (SELECT 
+				AVG(priceUSD)
+				FROM 
+				products);
+				
+--13
+SELECT
+c.name,
+p.pid,
+o.dollars
+FROM
+customers c 
+	INNER JOIN 
+	orders o 
+	ON 
+	c.cid = o.cid 
+		INNER JOIN 
+		products p 
+		ON 
+		o.pid = p.pid
+ORDER BY
+o.dollars DESC;
 
-	
-	
+--14	
+SELECT
+c.name,
+COALESCE(
+SUM(o.dollars), 0)
+FROM
+customers c 
+	LEFT OUTER JOIN 
+	orders o 
+	ON 
+	c.cid = o.cid
+GROUP BY 
+c.cid
+ORDER BY
+c.name ASC;	
+
+--15
+SELECT
+c.name AS Cust_Name,
+p.name AS Prod_Name,
+a.name AS Agent_Name
+FROM
+products p,
+agents a,
+orders o,
+customers c
+WHERE
+c.cid = o.cid AND
+p.pid = o.pid AND
+a.aid = o.aid AND
+a.city = 'New York';
+
+--16
+SELECT
+o.ordno AS "Order #",
+o.dollars AS "The Charged Price",
+((p.priceUSD * o.qty) - (c.discount / 100) * (p.priceUSD * o.qty)) AS "What The Price Should Have Been"
+FROM
+products p,
+orders o,
+customers c
+WHERE
+o.cid = c.cid AND
+o.pid = p.pid
+ORDER BY
+o.ordno ASC;
+
+--17
+UPDATE orders
+SET dollars = 1500
+WHERE dollars = 450
+
+
+
+
 	
 	
