@@ -65,11 +65,11 @@ o1.cid = o2.cid and
 c.city = 'Kyoto'
 ORDER BY o1.pid;	
 
---5 TODO
+--5 
 SELECT 
 c.name
 FROM 
-orders o, customers c
+customers c
 WHERE 
 c.cid NOT IN
 	(SELECT
@@ -77,9 +77,77 @@ c.cid NOT IN
 	FROM
 	orders o
 	);
-
-
 	
+--6
+SELECT DISTINCT
+c.name
+FROM
+orders o 
+RIGHT OUTER JOIN 
+customers c
+	ON 
+	c.cid = o.cid
+	WHERE 
+	o.cid IS NULL;
+
+--7
+SELECT DISTINCT 
+c.name AS Cust_Name, 
+a.name AS Agent_Name
+FROM 
+customers c, agents a, orders o
+WHERE 
+c.cid = o.cid AND 
+a.aid = o.aid AND 
+c.city = a.city;
+
+--8
+SELECT DISTINCT 
+c.name AS Cust_Name, 
+a.name AS Agent_Name,
+c.city AS City
+FROM 
+customers c, agents a
+WHERE 
+c.city = a.city;	
+
+--9
+SELECT
+c.name,
+c.city
+FROM
+customers c
+WHERE 
+c.city IN
+	(SELECT 
+	p.city
+	FROM 
+	products p
+	GROUP BY 
+	p.city
+	ORDER BY 
+	COUNT(p.city) ASC
+	LIMIT 1);
+
+--10
+SELECT
+c.name,
+c.city
+FROM
+customers c
+WHERE 
+c.city IN
+	(SELECT 
+	p.city
+	FROM 
+	products p
+	GROUP BY 
+	p.city
+	ORDER BY 
+	COUNT(p.city) DESC
+	LIMIT 1);
+
+
 	
 	
 	
